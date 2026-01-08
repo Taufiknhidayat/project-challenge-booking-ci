@@ -8,8 +8,6 @@ class Auth extends CI_Controller {
     }
 
     public function index() {
-        if ($this->session->userdata('email')) { redirect('admin'); }
-
         $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email');
         $this->form_validation->set_rules('password', 'Password', 'required|trim');
 
@@ -30,8 +28,7 @@ class Auth extends CI_Controller {
 
         if ($user && $user['is_active'] == 1) {
             if (password_verify($password, $user['password'])) {
-                $data = ['email' => $user['email'], 'role_id' => $user['role_id']];
-                $this->session->set_userdata($data);
+                $this->session->set_userdata(['email' => $user['email'], 'role_id' => $user['role_id']]);
                 redirect($user['role_id'] == 1 ? 'admin' : 'user');
             } else {
                 $this->session->set_flashdata('message', '<div class="alert alert-danger">Password salah!</div>');
@@ -59,7 +56,7 @@ class Auth extends CI_Controller {
                 'email' => htmlspecialchars($this->input->post('email', true)),
                 'image' => 'default.jpg',
                 'password' => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
-                'role_id' => 2,
+                'role_id' => 2, // Member
                 'is_active' => 1,
                 'date_created' => time()
             ];
